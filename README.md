@@ -7,5 +7,5 @@ Below are instructions on how to run them. Note that this doesn't include instru
 * elixir - `elixir tree.exs`
 * go - `go run tree.go [?path]`
 * java - `javac Tree.java && java Tree [?path]`
-* python - `python tree.py`
+* python - `python tree.py [?path]`
 * ruby - `ruby tree.rb [?path]`

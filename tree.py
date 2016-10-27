@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 
 class Tree:
     def __init__(self):
@@ -36,8 +37,11 @@ class Tree:
                 if os.path.isdir(absolute):
                     self.walk(absolute, prefix + "│   ")
 
-tree = Tree()
+directory = "."
+if len(sys.argv) > 1:
+    directory = sys.argv[1]
+print(directory)
 
-print(".")
-tree.walk(".")
+tree = Tree()
+tree.walk(directory)
 print("\n" + tree.summary())
