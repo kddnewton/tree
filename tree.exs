@@ -1,34 +1,41 @@
 defmodule Tree do
-  def walk(directory) do
-    IO.puts(directory)
-    process([directory], "")
-  end
+  def walk(directory, prefix \\ ""), do: walk(%{dirs: 0, files: 0}, directory, prefix)
 
-  defp filter({:error, _}), do: []
+  def walk(counts = %{dirs: wdirs, files: wfiles}, directory, prefix) do
+    filepaths = directory |> File.ls |> filter |> Enum.with_index
+
+    Enum.reduce(filepaths, %{dirs: wdirs + 1, files: wfiles}, fn({filepath, index}, %{dirs: cdirs, files: cfiles}) ->
+      new_prefix = output(prefix, filepath, index, filepaths |> Enum.count)
+
+      %{dirs: dirs, files: files} = walk_file(counts, Path.join(directory, filepath), new_prefix)
+      %{dirs: cdirs + dirs, files: cfiles + files}
+    end)
+  end
 
   defp filter({:ok, filepaths}), do: filepaths |> Enum.reject(&hidden?/1)
 
-  defp list_files(directory), do: directory |> File.ls |> filter
-
-  defp process(paths, prefix) do
-    paths |> Enum.join("/") |> list_files |> process_each(paths, prefix)
-  end
-
-  defp process_each([], _paths, _prefix) do
-  end
-
-  defp process_each([file], paths, prefix) do
-    IO.puts("#{prefix}└── #{file}")
-    process(paths ++ [file], "#{prefix}    ")
-  end
-
-  defp process_each([file | files], paths, prefix) do
-    IO.puts("#{prefix}├── #{file}")
-    process(paths ++ [file], "#{prefix}│    ")
-    process_each(files, paths, prefix)
-  end
-
   defp hidden?(filepath), do: filepath |> String.slice(0, 1) == "."
+
+  defp output(prefix, filepath, index, total) when index == total - 1 do
+    IO.puts("#{prefix}└── #{filepath}")
+    "#{prefix}    "
+  end
+
+  defp output(prefix, filepath, _index, _total) do
+    IO.puts("#{prefix}├── #{filepath}")
+    "#{prefix}│   "
+  end
+
+  defp walk_file(counts = %{dirs: dirs, files: files}, filepath, prefix) do
+    if filepath |> File.dir? do
+      walk(counts, filepath, prefix)
+    else
+      %{dirs: dirs, files: files + 1}
+    end
+  end
 end
 
-Tree.walk(".")
+directory = if System.argv |> Enum.count > 0, do: System.argv |> Enum.at(0), else: "."
+IO.puts(directory)
+%{dirs: dirs, files: files} = Tree.walk(directory)
+IO.puts("\n#{dirs - 1} directories, #{files} files")

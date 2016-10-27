@@ -4,7 +4,7 @@ I like the [tree](https://linux.die.net/man/1/tree) command. It has nice output,
 
 Below are instructions on how to run them. Note that this doesn't include instructions for how to install the languages themselves.
 
-* elixir - `elixir tree.exs`
+* elixir - `elixir tree.exs [?path]`
 * go - `go run tree.go [?path]`
 * java - `javac Tree.java && java Tree [?path]`
 * javascript - `node tree.js [?path]`
