@@ -1,15 +1,17 @@
 defmodule Tree do
-  def exec do
-    IO.puts(".")
-    File.ls |> filter |> process_each([], "")
+  def walk(directory) do
+    IO.puts(directory)
+    process([directory], "")
   end
 
   defp filter({:error, _}), do: []
 
   defp filter({:ok, filepaths}), do: filepaths |> Enum.reject(&hidden?/1)
 
+  defp list_files(directory), do: directory |> File.ls |> filter
+
   defp process(paths, prefix) do
-    paths |> Enum.join("/") |> File.ls |> filter |> process_each(paths, prefix)
+    paths |> Enum.join("/") |> list_files |> process_each(paths, prefix)
   end
 
   defp process_each([], _paths, _prefix) do
@@ -29,4 +31,4 @@ defmodule Tree do
   defp hidden?(filepath), do: filepath |> String.slice(0, 1) == "."
 end
 
-Tree.exec
+Tree.walk(".")
