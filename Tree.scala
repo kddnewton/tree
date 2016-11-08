@@ -1,38 +1,36 @@
 import java.io.File
 
-class Counter(val directories : Int, val files : Int) {
-  var dirCount : Int = directories
-  var fileCount : Int = files
+case class Counter(directories : Int = 0, files : Int = 0) {
+  def summarize {
+    println(s"\n${directories - 1} directories, $files files")
+  }
 }
 
 object Tree {
   def main(args: Array[String]) {
-    var directory = "."
-    if (args.length > 0) directory = args(0)
+    val directory = args.headOption.getOrElse(".")
     println(directory)
-
-    val counter = new Counter(-1, 0)
-    walk(new File(directory), "", counter)
-    printf("\n%d directories, %d files\n", counter.dirCount, counter.fileCount)
+    walk(new File(directory), "", Counter()).summarize
   }
 
-  def walk(directory : File, prefix : String, counter : Counter) {
+  def walk(directory : File, prefix : String, counter : Counter) : Counter = {
     val fileList = directory.listFiles
-    counter.dirCount += 1
+    var newCounter = counter.copy()
 
     fileList.zipWithIndex.foreach { case (file, index) =>
-      if (file.getName.charAt(0) != '.') {
-        val (pointer : String, prefixAdd : String) =
-          getDisplay(index, fileList.length - 1)
+      if (file.getName()(0) != '.') {
+        val (pointer : String, prefixAdd : String) = getDisplay(index, fileList.length - 1)
 
-        printf("%s%s%s\n", prefix, pointer, file.getName())
-        if (file.isDirectory) {
-          walk(file, prefix + prefixAdd, counter)
+        println(s"$prefix$pointer${file.getName}")
+        newCounter = if (file.isDirectory) {
+          walk(file, prefix + prefixAdd, newCounter)
         } else {
-          counter.fileCount += 1
+          newCounter.copy(files = newCounter.files + 1)
         }
       }
     }
+
+    newCounter.copy(directories = newCounter.directories + 1)
   }
 
   def getDisplay(index : Int, last : Int) : (String, String) = index match {
