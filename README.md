@@ -13,3 +13,5 @@ Below are instructions on how to run them. Note that this doesn't include instru
 * python - `python tree.py [?path]`
 * ruby - `ruby tree.rb [?path]`
 * scala - `scalac Tree.scala && scala Tree [?path]`
+* shell - `sh tree.sh [?path]`
+
