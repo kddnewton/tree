@@ -35,7 +35,7 @@ class Tree:
             else:
                 print(prefix + "├── " + filepaths[index])
                 if os.path.isdir(absolute):
-                    self.walk(absolute, prefix + "│   ")
+                    self.walk(absolute, prefix + "│   ")
 
 directory = "."
 if len(sys.argv) > 1:

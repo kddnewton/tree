@@ -15,7 +15,7 @@ Tree = Struct.new(:dirs, :files) do
 
     filepaths.sort.each_with_index do |filepath, idx|
       File.directory?(filepath) ? self.dirs += 1 : self.files += 1
-      pointer, preadd = (idx == last_idx) ? ['└── ', '    '] : ['├── ', '│   ']
+      pointer, preadd = (idx == last_idx) ? ['└── ', '    '] : ['├── ', '│   ']
 
       puts "#{prefix}#{pointer}#{File.basename(filepath)}"
       recurse(filepath, "#{prefix}#{preadd}") if File.directory?(filepath)
