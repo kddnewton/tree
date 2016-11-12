@@ -27,3 +27,6 @@ ruby:
 scala:
 	scalac Tree.scala
 	scala Tree
+
+shell:
+	sh tree.sh
