@@ -5,7 +5,7 @@ mkdir -p .tmp
 langs=(c elixir go java javascript php python ruby scala)
 for lang in ${langs[@]}; do
   make $lang > .tmp/original
-  start_line=$(grep -m1 -n "^\." .tmp/original | cut -c 1-1)
+  start_line=$(grep -m1 -n "^\.$" .tmp/original | cut -c 1-1)
 
   parts=($(wc -l .tmp/original))
   total_lines=${parts[0]}

@@ -32,6 +32,22 @@ void counter_free(counter_t *counter) {
   free(counter);
 }
 
+void bubble_sort(int size, char **entries) {
+  int x_idx;
+  int y_idx;
+  char *swap;
+
+  for (x_idx = 0; x_idx < size; x_idx++) {
+    for (y_idx = 0; y_idx < size - 1; y_idx++) {
+      if (strcmp(entries[y_idx], entries[y_idx + 1]) > 0) {
+        swap = entries[y_idx];
+        entries[y_idx] = entries[y_idx + 1];
+        entries[y_idx + 1] = swap;
+      }
+    }
+  }
+}
+
 int dir_entry_count(const char* directory) {
   DIR *dir_handle = opendir(directory);
   if (dir_handle == NULL) {
@@ -98,6 +114,7 @@ int walk(const char* directory, const char* prefix, counter_t* counter) {
     entries[entry_idx++] = entry_name;
   }
   closedir(dir_handle);
+  bubble_sort(entry_count, entries);
 
   char *full_path;
   char *prefix_ext;
@@ -109,7 +126,7 @@ int walk(const char* directory, const char* prefix, counter_t* counter) {
       prefix_ext = "    ";
     } else {
       pointer = "├── ";
-      prefix_ext = "│   ";
+      prefix_ext = "│   ";
     }
 
     printf("%s%s%s\n", prefix, pointer, entries[entry_idx]);
