@@ -40,7 +40,7 @@ Tree.prototype.walk = function (directory, prefix) {
     } else {
       console.log(prefix + '├── ' + filepath);
       if (isDirectory) {
-        _this.walk(absolute, prefix + '│   ');
+        _this.walk(absolute, prefix + '│   ');
       }
     }
   });
