@@ -19,7 +19,7 @@ class Tree:
         return str(self.dirCount) + " directories, " + str(self.fileCount) + " files"
 
     def walk(self, directory, prefix = ""):
-        filepaths = [filepath for filepath in os.listdir(directory)]
+        filepaths = sorted([filepath for filepath in os.listdir(directory)])
 
         for index in range(len(filepaths)):
             if filepaths[index][0] == ".":
