@@ -13,7 +13,7 @@ Tree = Struct.new(:dirs, :files) do
     filepaths = Dir[File.join(directory, '*')]
     last_idx  = filepaths.length - 1
 
-    filepaths.each_with_index do |filepath, idx|
+    filepaths.sort.each_with_index do |filepath, idx|
       File.directory?(filepath) ? self.dirs += 1 : self.files += 1
       pointer, preadd = (idx == last_idx) ? ['└── ', '    '] : ['├── ', '│   ']
 
