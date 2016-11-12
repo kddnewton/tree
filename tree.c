@@ -114,7 +114,7 @@ int walk(const char* directory, const char* prefix, counter_t* counter) {
     entries[entry_idx++] = entry_name;
   }
   closedir(dir_handle);
-  // bubble_sort(entry_count, entries);
+  bubble_sort(entry_count, entries);
 
   char *full_path;
   char *prefix_ext;
