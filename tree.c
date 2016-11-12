@@ -8,6 +8,29 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+int dir_entry_count(const char* directory) {
+  DIR *dir_handle = opendir(directory);
+  if (dir_handle == NULL) {
+    printf("Cannot open directory \"%s\"\n", directory);
+    return -1;
+  }
+
+  int count = 0;
+  struct dirent *file_dirent;
+  char *entry_name;
+
+  while ((file_dirent = readdir(dir_handle)) != NULL) {
+    entry_name = file_dirent->d_name;
+    if (entry_name[0] == '.') {
+      continue;
+    }
+    count++;
+  }
+
+  closedir(dir_handle);
+  return count;
+}
+
 char *join(const char* left, const char* right) {
   char *result = malloc(strlen(left) + strlen(right) + 1);
   strcpy(result, left);
@@ -30,47 +53,53 @@ int is_dir(const char* entry) {
 }
 
 int walk(const char* directory, const char* prefix) {
-  struct dirent *file_dirent;
-  DIR *dir_handle;
-
-  dir_handle = opendir(directory);
-  if (dir_handle == NULL) {
-    printf("Cannot open directory \"%s\"\n", directory);
-    return 1;
+  int entry_count = dir_entry_count(directory);
+  if (entry_count == -1) {
+    return -1;
   }
+  int entry_idx = 0;
+
+  struct dirent *file_dirent;
+  DIR *dir_handle = opendir(directory);
 
   char *entry_name;
-  char **entries = malloc(sizeof(char *) * 1000);
-  int entry_count = 0;
+  char **entries = malloc(sizeof(char *) * entry_count);
 
   while ((file_dirent = readdir(dir_handle)) != NULL) {
     entry_name = file_dirent->d_name;
     if (entry_name[0] == '.') {
       continue;
     }
-    entries[entry_count++] = entry_name;
+    entries[entry_idx++] = entry_name;
   }
   closedir(dir_handle);
 
-  int entry_idx;
-  char *joined;
+  char *full_path;
+  char *prefix_ext;
 
   for (entry_idx = 0; entry_idx < entry_count; entry_idx++) {
-    joined = path_join(directory, entries[entry_idx]);
+    full_path = path_join(directory, entries[entry_idx]);
 
     if (entry_idx == entry_count - 1) {
       printf("%s└── %s\n", prefix, entries[entry_idx]);
-      if (is_dir(joined)) {
-        walk(joined, join(prefix, "    "));
+      if (is_dir(full_path)) {
+        prefix_ext = join(prefix, "    ");
+        walk(full_path, prefix_ext);
+        free(prefix_ext);
       }
     } else {
       printf("%s├── %s\n", prefix, entries[entry_idx]);
-      if (is_dir(joined)) {
-        walk(joined, join(prefix, "│   "));
+      if (is_dir(full_path)) {
+        prefix_ext = join(prefix, "│   ");
+        walk(full_path, prefix_ext);
+        free(prefix_ext);
       }
     }
+
+    free(full_path);
   }
 
+  free(entries);
   return 0;
 }
 
