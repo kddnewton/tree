@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Depends on having `expr` and `ls` in the path
 
 dir_count=0
 file_count=0
