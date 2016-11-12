@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.Arrays;
 
 public class Tree {
   private int dirCount;
@@ -34,6 +35,7 @@ public class Tree {
   private void walk(File folder, String prefix) {
     File file;
     File[] fileList = folder.listFiles();
+    Arrays.sort(fileList);
 
     for (int index = 0; index < fileList.length; index++) {
       file = fileList[index];
@@ -50,7 +52,7 @@ public class Tree {
       } else {
         System.out.println(prefix + "├── " + file.getName());
         if (file.isDirectory()) {
-          walk(file, prefix + "│   ");
+          walk(file, prefix + "│   ");
         }
       }
     }

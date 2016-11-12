@@ -2,7 +2,7 @@ defmodule Tree do
   def walk(directory, prefix \\ ""), do: walk(%{dirs: 0, files: 0}, directory, prefix)
 
   def walk(counts = %{dirs: wdirs, files: wfiles}, directory, prefix) do
-    filepaths = directory |> File.ls |> filter |> Enum.with_index
+    filepaths = directory |> File.ls |> filter |> Enum.sort |> Enum.with_index
 
     Enum.reduce(filepaths, %{dirs: wdirs + 1, files: wfiles}, fn({filepath, index}, %{dirs: cdirs, files: cfiles}) ->
       new_prefix = output(prefix, filepath, index, filepaths |> Enum.count)
@@ -23,7 +23,7 @@ defmodule Tree do
 
   defp output(prefix, filepath, _index, _total) do
     IO.puts("#{prefix}├── #{filepath}")
-    "#{prefix}│   "
+    "#{prefix}│   "
   end
 
   defp walk_file(counts = %{dirs: dirs, files: files}, filepath, prefix) do

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+mkdir -p .tmp
+
+langs=(c elixir go java javascript php python ruby scala)
+for lang in ${langs[@]}; do
+  make $lang > .tmp/original
+  start_line=$(grep -m1 -n "^\." .tmp/original | cut -c 1-1)
+
+  parts=($(wc -l .tmp/original))
+  total_lines=${parts[0]}
+
+  tail -n $(expr $total_lines - $start_line + 1) .tmp/original > .tmp/modified
+  [ $(diff <(tree) .tmp/modified | wc -l) -eq 0 ] &&
+    echo "[pass] $lang" ||
+    echo "[fail] $lang"
+done
+
+rm -r .tmp
