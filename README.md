@@ -1,15 +1,15 @@
 # tree
 
-I like the [tree](https://linux.die.net/man/1/tree) command. It has nice output, and is generally a good short programming exercise. This repo is a collection of implementations that I've done in different languages.
+The GNU [tree](https://linux.die.net/man/1/tree) utility prints out a directory structure in a tree-like display using utf-8 characters. I've been using it as something to build when learning a new programming language. This repository contains all of the implementations that I have done in various languages. To execute, run `make [language]` where language is one of:
 
-Below are instructions on how to run them. Note that this doesn't include instructions for how to install the languages themselves.
+* c
+* elixir
+* go
+* java
+* javascript
+* php
+* python
+* ruby
+* scala
 
-* c - `gcc tree.c -o ctree && ./ctree [?path]`
-* elixir - `elixir tree.exs [?path]`
-* go - `go run tree.go [?path]`
-* java - `javac Tree.java && java Tree [?path]`
-* javascript - `node tree.js [?path]`
-* php - `php tree.php [?php]`
-* python - `python tree.py [?path]`
-* ruby - `ruby tree.rb [?path]`
-* scala - `scalac Tree.scala && scala Tree [?path]`
+Note that this does not include information on getting the necessary utilities installed, so you may not be able to run every one of them depending on your setup.

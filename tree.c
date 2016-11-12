@@ -8,6 +8,30 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+typedef struct counter {
+  int dir_count;
+  int file_count;
+} counter_t;
+
+counter_t* counter_build(void) {
+  counter_t *counter = (counter_t *) malloc(sizeof(counter_t));
+  counter->dir_count = 0;
+  counter->file_count = 0;
+  return counter;
+}
+
+void counter_incr_dirs(counter_t *counter) {
+  counter->dir_count += 1;
+}
+
+void counter_incr_files(counter_t *counter) {
+  counter->file_count += 1;
+}
+
+void counter_free(counter_t *counter) {
+  free(counter);
+}
+
 int dir_entry_count(const char* directory) {
   DIR *dir_handle = opendir(directory);
   if (dir_handle == NULL) {
@@ -52,7 +76,7 @@ int is_dir(const char* entry) {
   return S_ISDIR(entry_stat.st_mode);
 }
 
-int walk(const char* directory, const char* prefix) {
+int walk(const char* directory, const char* prefix, counter_t* counter) {
   int entry_count = dir_entry_count(directory);
   if (entry_count == -1) {
     return -1;
@@ -64,6 +88,7 @@ int walk(const char* directory, const char* prefix) {
 
   char *entry_name;
   char **entries = malloc(sizeof(char *) * entry_count);
+  counter_incr_dirs(counter);
 
   while ((file_dirent = readdir(dir_handle)) != NULL) {
     entry_name = file_dirent->d_name;
@@ -76,24 +101,26 @@ int walk(const char* directory, const char* prefix) {
 
   char *full_path;
   char *prefix_ext;
+  char *pointer;
 
   for (entry_idx = 0; entry_idx < entry_count; entry_idx++) {
+    if (entry_idx == entry_count - 1) {
+      pointer = "└── ";
+      prefix_ext = "    ";
+    } else {
+      pointer = "├── ";
+      prefix_ext = "│   ";
+    }
+
+    printf("%s%s%s\n", prefix, pointer, entries[entry_idx]);
     full_path = path_join(directory, entries[entry_idx]);
 
-    if (entry_idx == entry_count - 1) {
-      printf("%s└── %s\n", prefix, entries[entry_idx]);
-      if (is_dir(full_path)) {
-        prefix_ext = join(prefix, "    ");
-        walk(full_path, prefix_ext);
-        free(prefix_ext);
-      }
+    if (is_dir(full_path)) {
+      prefix_ext = join(prefix, prefix_ext);
+      walk(full_path, prefix_ext, counter);
+      free(prefix_ext);
     } else {
-      printf("%s├── %s\n", prefix, entries[entry_idx]);
-      if (is_dir(full_path)) {
-        prefix_ext = join(prefix, "│   ");
-        walk(full_path, prefix_ext);
-        free(prefix_ext);
-      }
+      counter_incr_files(counter);
     }
 
     free(full_path);
@@ -108,8 +135,12 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     directory = argv[1];
   }
-
   printf("%s\n", directory);
-  walk(directory, "");
+
+  counter_t *counter = counter_build();
+  walk(directory, "", counter);
+
+  printf("\n%d directories, %d files\n", counter->dir_count - 1, counter->file_count);
+  counter_free(counter);
   return 0;
 }
