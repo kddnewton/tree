@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"sort"
 )
 
 type Counter struct {
@@ -33,6 +34,7 @@ func dirnamesFrom(base string) []string {
 	names, _ := file.Readdirnames(0)
 	file.Close()
 
+	sort.Strings(names)
 	return names
 }
 
@@ -51,7 +53,7 @@ func tree(counter *Counter, base string, prefix string) {
 			tree(counter, subpath, prefix+"    ")
 		} else {
 			fmt.Println(prefix+"├──", name)
-			tree(counter, subpath, prefix+"│   ")
+			tree(counter, subpath, prefix+"│   ")
 		}
 	}
 }
