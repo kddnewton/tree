@@ -1,5 +1,5 @@
 c:
-	gcc tree.c -o ctree
+	gcc tree.c -Wall -o ctree
 	./ctree
 
 elixir:
