@@ -30,7 +30,7 @@ class Tree {
       } else {
         echo $prefix, "├── ", $filepath, "\n";
         if(is_dir($absolute)) {
-          $this->walk($absolute, $prefix . "│   ");
+          $this->walk($absolute, $prefix . "│   ");
         }
       }
     }
