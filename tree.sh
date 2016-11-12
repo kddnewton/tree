@@ -36,4 +36,3 @@ echo $root
 traverse $root ""
 echo
 echo "$(expr $dir_count - 1) directories, $file_count files"
-
