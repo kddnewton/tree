@@ -14,10 +14,9 @@ object Tree {
   }
 
   private def walk(node : File, prefix : String, counter : Counter) : Counter = {
-    val fileList = node.listFiles.filter(child => child.getName()(0) != '.').sorted
+    val fileList  = node.listFiles.filter(child => child.getName()(0) != '.').sorted
     val lastChild = fileList.lastOption
-
-    val memo = fileList.dropRight(1).foldLeft(counter)(process(prefix, "├── ", "│   "))
+    val memo      = fileList.dropRight(1).foldLeft(counter)(process(prefix, "├── ", "│   "))
     lastChild.foldLeft(memo)(process(prefix, "└── ", "    "))
   }
 
