@@ -3,7 +3,7 @@
 mkdir -p .tmp
 ecode=0
 
-langs=(c elixir go java javascript php python ruby scala)
+langs=(c elixir go java javascript php python ruby scala shell)
 for lang in ${langs[@]}; do
   make $lang > .tmp/original
   start_line=$(grep -m1 -n "^\.$" .tmp/original | cut -c 1-1)

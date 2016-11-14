@@ -14,7 +14,7 @@ traverse() {
 
   for idx in "${!children[@]}"; do 
     local child="${children[$idx]}"
-    local child_prefix="│   "
+    local child_prefix="│   "
     local pointer="├── "
 
     if [ $idx -eq $(expr ${#children[@]} - 1) ]; then
