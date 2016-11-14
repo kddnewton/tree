@@ -8,27 +8,20 @@ case class Counter(dirs : Int = 0, files : Int = 0) {
 
 object Tree {
   def main(args: Array[String]) {
-    val directory = args.headOption.getOrElse(".")
-    println(directory)
-    walk(new File(directory), "", Counter()).summarize
+    val root = args.headOption.getOrElse(".")
+    println(root)
+    walk(new File(root), "", Counter()).summarize
   }
 
-  def walk(node : File, prefix : String, counter : Counter) : Counter = {
-    var newCounter = counter.copy()
+  private def walk(node : File, prefix : String, counter : Counter) : Counter = {
     val fileList = node.listFiles.filter(child => child.getName()(0) != '.').sorted
     val lastChild = fileList.lastOption
 
-    fileList.dropRight(1).foreach { node => newCounter = traverse(false, prefix, newCounter, node) }
-    lastChild.foreach { node => newCounter = traverse(true, prefix, newCounter, node) }
-
-    newCounter
+    val memo = fileList.dropRight(1).foldLeft(counter)(process(prefix, "├── ", "│   "))
+    lastChild.foldLeft(memo)(process(prefix, "└── ", "    "))
   }
 
-  def traverse(isLast : Boolean, prefix : String, counter : Counter, node : File) : Counter = {
-    val (pointer : String, prefixAdd : String) =
-      if (isLast) ("└── ", "    ")
-      else        ("├── ", "│   ")
-
+  private def process(prefix : String, pointer : String, prefixAdd : String)(counter : Counter, node : File) : Counter = {
     println(s"$prefix$pointer${node.getName}")
     if (node.isDirectory) {
       walk(node, s"$prefix$prefixAdd", counter.copy(dirs = counter.dirs + 1))
