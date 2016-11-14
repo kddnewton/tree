@@ -1,5 +1,4 @@
 import java.io.File
-import scala.util.Sorting.quickSort
 
 case class Counter(dirs : Int = 0, files : Int = 0) {
   def summarize {
@@ -16,8 +15,7 @@ object Tree {
 
   def walk(node : File, prefix : String, counter : Counter) : Counter = {
     var newCounter = counter.copy()
-    val fileList = node.listFiles.filter(child => child.getName()(0) != '.')
-    quickSort(fileList)
+    val fileList = node.listFiles.filter(child => child.getName()(0) != '.').sorted
 
     fileList.zipWithIndex.foreach { case (file, index) =>
       val (pointer : String, prefixAdd : String) = getDisplay(index, fileList.length - 1)
