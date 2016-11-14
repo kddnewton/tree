@@ -2,7 +2,7 @@ import java.io.File
 
 case class Counter(dirs : Int = 0, files : Int = 0) {
   def summarize {
-    println(s"\n${dirs - 1} directories, $files files")
+    println(s"\n$dirs directories, $files files")
   }
 }
 
@@ -22,13 +22,13 @@ object Tree {
 
       println(s"$prefix$pointer${file.getName}")
       newCounter = if (file.isDirectory) {
-        walk(file, prefix + prefixAdd, newCounter)
+        walk(file, prefix + prefixAdd, newCounter.copy(dirs = newCounter.dirs + 1))
       } else {
         newCounter.copy(files = newCounter.files + 1)
       }
     }
 
-    newCounter.copy(dirs = newCounter.dirs + 1)
+    newCounter
   }
 
   def getDisplay(index : Int, last : Int) : (String, String) = index match {
