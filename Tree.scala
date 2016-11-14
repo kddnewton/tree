@@ -16,7 +16,7 @@ object Tree {
 
   def walk(node : File, prefix : String, counter : Counter) : Counter = {
     var newCounter = counter.copy()
-    val fileList = for (child <- node.listFiles if child.getName()(0) != '.') yield child
+    val fileList = node.listFiles.filter(child => child.getName()(0) != '.')
     quickSort(fileList)
 
     fileList.zipWithIndex.foreach { case (file, index) =>
