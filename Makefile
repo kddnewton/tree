@@ -24,6 +24,10 @@ python:
 ruby:
 	ruby tree.rb
 
+rust:
+	rustc tree.rs -o rusttree
+	./rusttree
+
 scala:
 	scalac Tree.scala
 	scala Tree
