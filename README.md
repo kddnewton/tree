@@ -10,6 +10,7 @@ The GNU [tree](https://linux.die.net/man/1/tree) utility prints out a directory 
 * php
 * python
 * ruby
+* rust
 * scala
 * shell
 
