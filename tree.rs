@@ -19,9 +19,9 @@ fn walk(dir: &str, prefix: &str, counts: &mut Counts) -> io::Result<()> {
 
   for path in paths {
     let name = path.file_name().unwrap().to_str().unwrap();
+    index -= 1;
 
     if name.starts_with(".") {
-      index -= 1;
       continue;
     }
 
@@ -31,7 +31,7 @@ fn walk(dir: &str, prefix: &str, counts: &mut Counts) -> io::Result<()> {
       counts.files += 1;
     }
 
-    if index == 1 {
+    if index == 0 {
       println!("{}└── {}", prefix, name);
       if path.is_dir() {
         walk(&format!("{}/{}", dir, name), &format!("{}    ", prefix), counts)?;
@@ -42,8 +42,6 @@ fn walk(dir: &str, prefix: &str, counts: &mut Counts) -> io::Result<()> {
         walk(&format!("{}/{}", dir, name), &format!("{}│   ", prefix), counts)?;
       }
     }
-
-    index -= 1;
   }
 
   Ok(())
