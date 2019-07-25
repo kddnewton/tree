@@ -1,5 +1,6 @@
 /.tmp/
-/ctree
-/ctree.dSYM/
-/rusttree
+/tree
+/tree.dSYM/
+/tree.hi
+/tree.o
 /*.class

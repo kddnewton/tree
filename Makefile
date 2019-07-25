@@ -1,12 +1,16 @@
 c:
-	gcc tree.c -Wall -o ctree
-	./ctree
+	gcc -Wall -o tree tree.c
+	./tree
 
 elixir:
 	elixir tree.exs
 
 go:
 	go run tree.go
+
+haskell:
+	ghc -o tree tree.hs
+	./tree
 
 java:
 	javac Tree.java
@@ -25,8 +29,8 @@ ruby:
 	ruby tree.rb
 
 rust:
-	rustc tree.rs -o rusttree
-	./rusttree
+	rustc -o tree tree.rs
+	./tree
 
 scala:
 	scalac Tree.scala
