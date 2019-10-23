@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[ -z ${var+x} ] && export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
+
 mkdir -p .tmp
 ecode=0
 
