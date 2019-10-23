@@ -8,16 +8,16 @@ elixir:
 go:
 	go run tree.go
 
-haskell:
-	ghc -o tree tree.hs
-	./tree
-
 java:
 	javac Tree.java
 	java Tree
 
 javascript:
 	node tree.js
+
+objectivec:
+	clang -framework Foundation -o tree tree.m
+	./tree
 
 php:
 	php tree.php
