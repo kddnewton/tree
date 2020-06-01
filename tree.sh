@@ -12,25 +12,23 @@ traverse() {
   local children=($directory/*)
   local child_count=${#children[@]}
 
-  if (( ${#children[*]} )); then
-    for idx in "${!children[@]}"; do 
-      local child=${children[$idx]// /\\ }
-      child=${child##*/}
+  for idx in "${!children[@]}"; do 
+    local child=${children[$idx]// /\\ }
+    child=${child##*/}
 
-      local child_prefix="│   "
-      local pointer="├── "
+    local child_prefix="│   "
+    local pointer="├── "
 
-      if [ $idx -eq $((child_count - 1)) ]; then
-        pointer="└── "
-        child_prefix="    "
-      fi
+    if [ $idx -eq $((child_count - 1)) ]; then
+      pointer="└── "
+      child_prefix="    "
+    fi
 
-      echo "${prefix}${pointer}$child"
-      [ -d "$directory/$child" ] &&
-        traverse "$directory/$child" "${prefix}$child_prefix" ||
-        file_count=$((file_count + 1))
-    done
-  fi
+    echo "${prefix}${pointer}$child"
+    [ -d "$directory/$child" ] &&
+      traverse "$directory/$child" "${prefix}$child_prefix" ||
+      file_count=$((file_count + 1))
+  done
 }
 
 root="."
