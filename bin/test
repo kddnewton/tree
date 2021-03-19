@@ -14,7 +14,7 @@ for lang in ${langs[@]}; do
   total_lines=${parts[0]}
 
   tail -n $(expr $total_lines - $start_line + 1) .tmp/original > .tmp/modified
-  diffed=$(diff <(tree) .tmp/modified | wc -l)
+  diffed=$(diff <(LS_COLORS=false tree) .tmp/modified | wc -l)
 
   [ $diffed -eq 0 ] && echo "[pass] $lang" || echo "[fail] $lang"
   [ $diffed -ne 0 ] && ecode=1

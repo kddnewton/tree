@@ -1,163 +1,108 @@
 #include <stdlib.h>
 #include <string.h>
-
 #include <stdio.h>
 #include <dirent.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 typedef struct counter {
-  int dir_count;
-  int file_count;
+  size_t dirs;
+  size_t files;
 } counter_t;
 
-counter_t* counter_build(void) {
-  counter_t *counter = (counter_t *) malloc(sizeof(counter_t));
-  counter->dir_count = 0;
-  counter->file_count = 0;
-  return counter;
-}
+typedef struct entry {
+  char *name;
+  int is_dir;
+  struct entry *next;
+} entry_t;
 
-void counter_incr_dirs(counter_t *counter) {
-  counter->dir_count += 1;
-}
+int walk(const char* directory, const char* prefix, counter_t *counter) {
+  entry_t *head = NULL, *current, *iter;
+  size_t size = 0, index;
 
-void counter_incr_files(counter_t *counter) {
-  counter->file_count += 1;
-}
+  struct dirent *file_dirent;
+  DIR *dir_handle;
 
-void counter_free(counter_t *counter) {
-  free(counter);
-}
+  char *full_path, *segment, *pointer, *next_prefix;
 
-void bubble_sort(int size, char **entries) {
-  int x_idx;
-  int y_idx;
-  char *swap;
-
-  for (x_idx = 0; x_idx < size; x_idx++) {
-    for (y_idx = 0; y_idx < size - 1; y_idx++) {
-      if (strcmp(entries[y_idx], entries[y_idx + 1]) > 0) {
-        swap = entries[y_idx];
-        entries[y_idx] = entries[y_idx + 1];
-        entries[y_idx + 1] = swap;
-      }
-    }
-  }
-}
-
-int dir_entry_count(const char* directory) {
-  DIR *dir_handle = opendir(directory);
-  if (dir_handle == NULL) {
-    printf("Cannot open directory \"%s\"\n", directory);
+  dir_handle = opendir(directory);
+  if (!dir_handle) {
+    fprintf(stderr, "Cannot open directory \"%s\"\n", directory);
     return -1;
   }
 
-  int count = 0;
-  struct dirent *file_dirent;
-  char *entry_name;
+  counter->dirs++;
 
   while ((file_dirent = readdir(dir_handle)) != NULL) {
-    entry_name = file_dirent->d_name;
-    if (entry_name[0] == '.') {
+    if (file_dirent->d_name[0] == '.') {
       continue;
     }
-    count++;
+
+    current = malloc(sizeof(entry_t));
+    current->name = strcpy(malloc(strlen(file_dirent->d_name)), file_dirent->d_name);
+    current->is_dir = file_dirent->d_type == DT_DIR;
+    current->next = NULL;
+
+    if (head == NULL) {
+      head = current;
+    } else if (strcmp(current->name, head->name) < 0) {
+      current->next = head;
+      head = current;
+    } else {
+      for (iter = head; iter->next && strcmp(current->name, iter->next->name) > 0; iter = iter->next);
+
+      current->next = iter->next;
+      iter->next = current;
+    }
+
+    size++;
   }
 
   closedir(dir_handle);
-  return count;
-}
-
-char *join(const char* left, const char* right) {
-  char *result = malloc(strlen(left) + strlen(right) + 1);
-  strcpy(result, left);
-  strcat(result, right);
-  return result;
-}
-
-char *path_join(const char* directory, const char* entry) {
-  char *result = malloc(strlen(directory) + strlen(entry) + 2);
-  strcpy(result, directory);
-  strcat(result, "/");
-  strcat(result, entry);
-  return result;
-}
-
-int is_dir(const char* entry) {
-  struct stat entry_stat;
-  stat(entry, &entry_stat);
-  return S_ISDIR(entry_stat.st_mode);
-}
-
-int walk(const char* directory, const char* prefix, counter_t* counter) {
-  int entry_count = dir_entry_count(directory);
-  if (entry_count == -1) {
-    return -1;
+  if (!head) {
+    return 0;
   }
-  int entry_idx = 0;
 
-  struct dirent *file_dirent;
-  DIR *dir_handle = opendir(directory);
-
-  char *entry_name;
-  char **entries = malloc(sizeof(char *) * entry_count);
-  counter_incr_dirs(counter);
-
-  while ((file_dirent = readdir(dir_handle)) != NULL) {
-    entry_name = file_dirent->d_name;
-    if (entry_name[0] == '.') {
-      continue;
-    }
-    entries[entry_idx++] = entry_name;
-  }
-  closedir(dir_handle);
-  bubble_sort(entry_count, entries);
-
-  char *full_path;
-  char *prefix_ext;
-  char *pointer;
-
-  for (entry_idx = 0; entry_idx < entry_count; entry_idx++) {
-    if (entry_idx == entry_count - 1) {
+  for (index = 0; index < size; index++) {
+    if (index == size - 1) {
       pointer = "└── ";
-      prefix_ext = "    ";
+      segment = "    ";
     } else {
       pointer = "├── ";
-      prefix_ext = "│   ";
+      segment = "│   ";
     }
 
-    printf("%s%s%s\n", prefix, pointer, entries[entry_idx]);
-    full_path = path_join(directory, entries[entry_idx]);
+    printf("%s%s%s\n", prefix, pointer, head->name);
 
-    if (is_dir(full_path)) {
-      prefix_ext = join(prefix, prefix_ext);
-      walk(full_path, prefix_ext, counter);
-      free(prefix_ext);
+    if (head->is_dir) {
+      full_path = malloc(strlen(directory) + strlen(head->name) + 2);
+      sprintf(full_path, "%s/%s", directory, head->name);
+
+      next_prefix = malloc(strlen(prefix) + strlen(segment) + 1);
+      sprintf(next_prefix, "%s%s", prefix, segment);
+
+      walk(full_path, next_prefix, counter);
+      free(full_path);
+      free(next_prefix);
     } else {
-      counter_incr_files(counter);
+      counter->files++;
     }
 
-    free(full_path);
+    current = head;
+    head = head->next;
+
+    free(current->name);
+    free(current);
   }
 
-  free(entries);
   return 0;
 }
 
 int main(int argc, char *argv[]) {
-  char* directory = ".";
-  if (argc > 1) {
-    directory = argv[1];
-  }
+  char* directory = argc > 1 ? argv[1] : ".";
   printf("%s\n", directory);
 
-  counter_t *counter = counter_build();
-  walk(directory, "", counter);
+  counter_t counter = {0, 0};
+  walk(directory, "", &counter);
 
-  printf("\n%d directories, %d files\n", counter->dir_count - 1, counter->file_count);
-  counter_free(counter);
+  printf("\n%zu directories, %zu files\n", counter.dirs - 1, counter.files);
   return 0;
 }
