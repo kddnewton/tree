@@ -3,37 +3,26 @@
 const fs = require("fs");
 const path = require("path");
 
-const walk = (directory, prefix, counts) => {
-  const filepaths = fs.readdirSync(directory);
+const counts = { dirs: 0, files: 0 };
 
-  filepaths.forEach((filepath, index) => {
-    if (filepath.charAt(0) == ".") {
-      return;
-    }
+function walk(directory, prefix) {
+  fs.readdirSync(directory, { withFileTypes: true }).forEach((file, index, files) => {
+    if (file.name.charAt(0) != ".") {
+      const parts = index == files.length - 1 ? ["└── ", "    "] : ["├── ", "│   "];
+      console.log(`${prefix}${parts[0]}${file.name}`);
 
-    const absolute = path.join(directory, filepath);
-    const isDirectory = fs.lstatSync(absolute).isDirectory();
-
-    counts[isDirectory ? "dirs" : "files"] += 1;
-
-    if (index == filepaths.length - 1) {
-      console.log(`${prefix}└── ${filepath}`);
-      if (isDirectory) {
-        walk(absolute, `${prefix}    `, counts);
-      }
-    } else {
-      console.log(`${prefix}├── ${filepath}`);
-      if (isDirectory) {
-        walk(absolute, `${prefix}│   `, counts);
+      if (file.isDirectory()) {
+        counts.dirs += 1;
+        walk(path.join(directory, file.name), `${prefix}${parts[1]}`);
+      } else {
+        counts.files += 1;
       }
     }
   });
-};
+}
 
 const directory = process.argv[2] || ".";
-const counts = { dirs: 0, files: 0 };
-
 console.log(directory);
-walk(directory, "", counts);
 
+walk(directory, "");
 console.log(`\n${counts.dirs} directories, ${counts.files} files`);
