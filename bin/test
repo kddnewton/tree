@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-[ -z ${var+x} ] && export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
+# Create some directories for testing purposes
+mkdir -p a/b/c/d
 
+# Make a directory to contain the output of the files
 mkdir -p .tmp
 ecode=0
 
-langs=($(cat Makefile | grep '^[a-z]' | sed 's/.$//'))
+langs=($(cat Makefile | grep '^[a-z+]\+:' | sed 's/.$//'))
 for lang in ${langs[@]}; do
   if make $lang > .tmp/original; then
     start_line=$(grep -m1 -n "^\.$" .tmp/original | cut -c 1-1)
@@ -14,6 +16,7 @@ for lang in ${langs[@]}; do
     total_lines=${parts[0]}
 
     tail -n $(expr $total_lines - $start_line + 1) .tmp/original > .tmp/modified
+    [ $CI ] && diff <(LS_COLORS=false tree) .tmp/modified
     diffed=$(diff <(LS_COLORS=false tree) .tmp/modified | wc -l)
   else
     diffed=1
