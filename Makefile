@@ -1,6 +1,9 @@
 c:
 	gcc -Wall -o tree tree.c && ./tree
 
+c++:
+	g++ -Wall -std=c++17 -o tree tree.cpp && ./tree
+
 elixir:
 	which elixir && elixir tree.exs
 
