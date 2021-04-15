@@ -17,7 +17,11 @@ javascript:
 	node tree.js
 
 objectivec:
+ifeq ($(shell uname -s), Darwin)
 	clang -framework Foundation -o tree tree.m && ./tree
+else
+	gcc -I/usr/include/GNUstep -fconstant-string-class=NSConstantString -o tree tree.m -lobjc -lgnustep-base && ./tree
+endif
 
 php:
 	php tree.php
@@ -35,4 +39,4 @@ scala:
 	which scalac && scalac Tree.scala && scala Tree
 
 shell:
-	sh tree.sh
+	bash tree.sh

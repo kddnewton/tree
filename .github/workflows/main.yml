@@ -1,0 +1,14 @@
+name: Main
+on:
+- push
+- pull_request_target
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+    - uses: actions/checkout@master
+    - run: sudo apt-get install -y gnustep gnustep-devel gobjc scala elixir
+    - run: bin/test
