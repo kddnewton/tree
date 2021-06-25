@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace treeCMD
@@ -20,10 +16,11 @@ namespace treeCMD
             string defaultPath = Directory.GetCurrentDirectory();
             Console.WriteLine(defaultPath);
             DirectoryInfo directory = new DirectoryInfo(defaultPath);
-            Walk(directory, "");
+            Walk(directory, string.Empty);
             Console.WriteLine($"\n{Count.Dirs} diretories, {Count.Files} files");
 
-
+            // Debug
+            // Console.ReadLine();
         }
 
         static void Walk(DirectoryInfo directoryInfo, string prefix)
