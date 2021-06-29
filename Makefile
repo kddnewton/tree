@@ -5,7 +5,7 @@ c++:
 	g++ -Wall -std=c++17 -o tree tree.cpp && ./tree
 
 elixir:
-	which elixir && elixir tree.exs
+	elixir tree.exs
 
 go:
 	go run tree.go
@@ -33,10 +33,10 @@ ruby:
 	ruby tree.rb
 
 rust:
-	which rustc && rustc -o tree tree.rs && ./tree
+	rustc -o tree tree.rs && ./tree
 
 scala:
-	which scalac && scalac Tree.scala && scala Tree
+	scalac Tree.scala && scala Tree
 
 shell:
 	bash tree.sh
