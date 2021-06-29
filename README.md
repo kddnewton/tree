@@ -18,10 +18,6 @@ The GNU [tree](https://linux.die.net/man/1/tree) utility prints out a directory 
 
 Note that this does not include information on getting the necessary utilities installed, so you may not be able to run every one of them depending on your setup.
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/kddeisz/tree.
-
 ## License
 
 The code is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
