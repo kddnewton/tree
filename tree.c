@@ -37,7 +37,7 @@ int walk(const char* directory, const char* prefix, counter_t *counter) {
     }
 
     current = malloc(sizeof(entry_t));
-    current->name = strcpy(malloc(strlen(file_dirent->d_name)), file_dirent->d_name);
+    current->name = strcpy(malloc(strlen(file_dirent->d_name) + 1), file_dirent->d_name);
     current->is_dir = file_dirent->d_type == DT_DIR;
     current->next = NULL;
 
@@ -103,6 +103,7 @@ int main(int argc, char *argv[]) {
   counter_t counter = {0, 0};
   walk(directory, "", &counter);
 
-  printf("\n%zu directories, %zu files\n", counter.dirs - 1, counter.files);
+  printf("\n%zu directories, %zu files\n",
+    counter.dirs ? counter.dirs - 1 : 0, counter.files);
   return 0;
 }
