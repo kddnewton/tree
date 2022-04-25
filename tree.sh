@@ -9,12 +9,11 @@ traverse() {
   local directory=$1
   local prefix=$2
 
-  local children=($directory/*)
+  local children=("$directory"/*)
   local child_count=${#children[@]}
 
   for idx in "${!children[@]}"; do 
-    local child=${children[$idx]// /\\ }
-    child=${child##*/}
+    local child=${children[$idx]}
 
     local child_prefix="│   "
     local pointer="├── "
@@ -24,9 +23,9 @@ traverse() {
       child_prefix="    "
     fi
 
-    echo "${prefix}${pointer}$child"
-    [ -d "$directory/$child" ] &&
-      traverse "$directory/$child" "${prefix}$child_prefix" ||
+    echo "${prefix}${pointer}${child##*/}"
+    [ -d "$child" ] &&
+      traverse "$child" "${prefix}$child_prefix" ||
       file_count=$((file_count + 1))
   done
 }
