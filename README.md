@@ -22,8 +22,12 @@ Note that this does not include information on getting the necessary utilities i
 
 To test one of the implementations for example bash:
 ```bash
-cd test;
-bash ../tree.sh
+cd test; bash ../tree.sh cd ..;
+```
+
+The bash implementation has hidden file support with the -a flag:
+```bash
+cd test; bash ../tree.sh -a; cd ..;
 ```
 
 You should see something like the following output:
