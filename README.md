@@ -17,3 +17,14 @@ The GNU [tree](https://linux.die.net/man/1/tree) utility prints out a directory 
 * shell
 
 Note that this does not include information on getting the necessary utilities installed, so you may not be able to run every one of them depending on your setup.
+
+## Testing
+
+To test one of the implementations for example bash:
+```bash
+cd test;
+bash ../tree.sh
+```
+
+You should see something like the following output:
+
