@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 shopt -s nullglob
+
 dir_count=0
 file_count=0
 
@@ -30,11 +31,24 @@ traverse() {
   done
 }
 
-root="."
-[ "$#" -ne 0 ] && root="$1"
-echo $root
+while getopts "a" o; do case "${o}" in a) show_hidden_files=true; ;; esac; done
 
-traverse $root ""
+echo $show_hidden_files;
+shift $((OPTIND-1))
+
+if [ "$show_hidden_files" = true ] ; then shopt -s dotglob; fi
+
+if [ -z "${a}" ] || [ -z "${p}" ]; then
+  root="."
+  [ "$#" -ne 0 ] && root="$1"
+  echo $root
+  traverse $root ""
+fi
+
 echo
 echo "$(($dir_count - 1)) directories, $file_count files"
+
+
+if [ "$show_hidden_files" = true ] ; then shopt -s dotglob; fi
 shopt -u nullglob
+unset show_hidden_files;
