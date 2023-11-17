@@ -39,4 +39,4 @@ scala:
 	scalac Tree.scala && scala Tree
 
 shell:
-	bash tree.sh
+	bash tree.sh $(CFLAGS)
